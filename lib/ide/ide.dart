@@ -119,9 +119,9 @@ class _IDEState extends State<IDE> {
                   color: Color(0xFF292525)
               ),
               padding: const EdgeInsets.all(9),
-              child: const Icon(
+              child: Icon(
                 Icons.play_arrow,
-                color: Color(0xFFD9D9D9),
+                color: (controller.isConnected)? Color(0xFFD9D9D9) : Colors.grey,
                 size: 50,
               ),
             ),
