@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:tod/model/erro.dart';
 import 'package:tod/view/ide/ide_controller.dart';
+import 'package:tod/view/statistics.dart';
 class IDE extends StatefulWidget {
   const IDE({Key? key}) : super(key: key);
 
@@ -58,7 +60,10 @@ class _IDEState extends State<IDE> {
             ListTile(
               leading: const Icon(Icons.area_chart,color: Colors.white,),
               title: Text('Statistics'.toUpperCase(),style: const TextStyle(color: Colors.white, fontSize: 17),),
-              onTap: () {
+              onTap: () async{
+                controller.getListToStatistics().then((value){
+                  Navigator.push(context,MaterialPageRoute(builder: (context) => PieChart(value)));
+                });
                 // Implementar ação ao selecionar o item 2
               },
             ),

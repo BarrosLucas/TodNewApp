@@ -193,6 +193,22 @@ mixin _$IDEController on ControllerBase, Store {
     return _$sendStringAsyncAction.run(() => super.sendString(code));
   }
 
+  late final _$compileAsyncAction =
+      AsyncAction('ControllerBase.compile', context: context);
+
+  @override
+  Future compile() {
+    return _$compileAsyncAction.run(() => super.compile());
+  }
+
+  late final _$checkCodeAsyncAction =
+      AsyncAction('ControllerBase.checkCode', context: context);
+
+  @override
+  Future<String> checkCode() {
+    return _$checkCodeAsyncAction.run(() => super.checkCode());
+  }
+
   late final _$saveFileAsyncAction =
       AsyncAction('ControllerBase.saveFile', context: context);
 
@@ -218,28 +234,6 @@ mixin _$IDEController on ControllerBase, Store {
         name: 'ControllerBase.newCode');
     try {
       return super.newCode();
-    } finally {
-      _$ControllerBaseActionController.endAction(_$actionInfo);
-    }
-  }
-
-  @override
-  dynamic compile() {
-    final _$actionInfo = _$ControllerBaseActionController.startAction(
-        name: 'ControllerBase.compile');
-    try {
-      return super.compile();
-    } finally {
-      _$ControllerBaseActionController.endAction(_$actionInfo);
-    }
-  }
-
-  @override
-  String checkCode() {
-    final _$actionInfo = _$ControllerBaseActionController.startAction(
-        name: 'ControllerBase.checkCode');
-    try {
-      return super.checkCode();
     } finally {
       _$ControllerBaseActionController.endAction(_$actionInfo);
     }

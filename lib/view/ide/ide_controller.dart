@@ -4,11 +4,14 @@ import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 
 import 'package:mobx/mobx.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:permission_handler/permission_handler.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tod/model/erro.dart';
 import 'package:tod/utils/compiler.dart';
 import 'package:tod/utils/exceptions/exceptions.dart';
 
@@ -142,8 +145,8 @@ abstract class ControllerBase with Store{
   }
 
   @action
-  compile(){
-    String c = checkCode();
+  compile() async{
+    String c = await checkCode();
     print(c);
     if(c.isNotEmpty){
       sendString(c);
@@ -151,35 +154,62 @@ abstract class ControllerBase with Store{
   }
 
   @action
-  String checkCode(){
+  Future<String> checkCode() async{
+    final prefs = await SharedPreferences.getInstance();
+    // Try reading data from the 'counter' key. If it doesn't exist, returns null.
+    final int invalidParamException = prefs.getInt('invalidParamException') ?? 0;
+    final int missingParamException = prefs.getInt('missingParamException') ?? 0;
+    final int missCloseParenthesesException = prefs.getInt('missCloseParenthesesException') ?? 0;
+    final int missSemicolonException = prefs.getInt('missSemicolonException') ?? 0;
+    final int missOpenParenthesesException = prefs.getInt('missOpenParenthesesException') ?? 0;
+    final int missConditionException = prefs.getInt('missConditionException') ?? 0;
+    final int missOpenBraceException = prefs.getInt('missOpenBraceException') ?? 0;
+    final int invalidConditionException = prefs.getInt('invalidConditionException') ?? 0;
+    final int missConditionalBlockException = prefs.getInt('missConditionalBlockException') ?? 0;
+    final int unexpectedCloseBraceException = prefs.getInt('unexpectedCloseBraceException') ?? 0;
+    final int invalidInstructionException = prefs.getInt('invalidInstructionException') ?? 0;
+    final int otherException = prefs.getInt('otherException') ?? 0;
+
     try{
       return Compiler().getCommands(code.text);
     }catch(e){
       visibleErrorDialog  = true;
       if(e is InvalidParamException){
         msgErrorDialog = e.message;
+        await prefs.setInt('invalidParamException', invalidParamException+1);
       }else if(e is MissingParamException){
         msgErrorDialog = e.message;
+        await prefs.setInt('missingParamException', missingParamException+1);
       }else if(e is MissCloseParenthesesException){
         msgErrorDialog = e.message;
+        await prefs.setInt('missCloseParenthesesException', missCloseParenthesesException+1);
       }else if(e is MissSemicolonException){
         msgErrorDialog = e.message;
+        await prefs.setInt('missSemicolonException', missSemicolonException+1);
       }else if(e is MissOpenParenthesesException){
         msgErrorDialog = e.message;
+        await prefs.setInt('missOpenParenthesesException', missOpenParenthesesException+1);
       }else if(e is MissConditionException){
         msgErrorDialog = e.message;
+        await prefs.setInt('missConditionException', missConditionException+1);
       }else if(e is MissOpenBraceException){
         msgErrorDialog = e.message;
+        await prefs.setInt('missOpenBraceException', missOpenBraceException+1);
       }else if(e is InvalidConditionException){
         msgErrorDialog = e.message;
+        await prefs.setInt('invalidConditionException', invalidConditionException+1);
       }else if(e is MissConditionalBlockException){
         msgErrorDialog = e.message;
+        await prefs.setInt('missConditionalBlockException', missConditionalBlockException+1);
       }else if(e is UnexpectedCloseBraceException){
         msgErrorDialog = e.message;
+        await prefs.setInt('unexpectedCloseBraceException', unexpectedCloseBraceException+1);
       }else if(e is InvalidInstructionException){
         msgErrorDialog = e.message;
+        await prefs.setInt('invalidInstructionException', invalidInstructionException+1);
       }else{
         msgErrorDialog = "Verifique seu código e tente novamente";
+        await prefs.setInt('otherException', otherException+1);
         print(e);
       }
       print(msgErrorDialog);
@@ -223,5 +253,37 @@ abstract class ControllerBase with Store{
       return;
     }
     code.text = await file.readAsString();
+  }
+
+  Future<List<Erro>> getListToStatistics() async{
+    final prefs = await SharedPreferences.getInstance();
+    // Try reading data from the 'counter' key. If it doesn't exist, returns null.
+    final int invalidParamException = prefs.getInt('invalidParamException') ?? 0;
+    final int missingParamException = prefs.getInt('missingParamException') ?? 0;
+    final int missCloseParenthesesException = prefs.getInt('missCloseParenthesesException') ?? 0;
+    final int missSemicolonException = prefs.getInt('missSemicolonException') ?? 0;
+    final int missOpenParenthesesException = prefs.getInt('missOpenParenthesesException') ?? 0;
+    final int missConditionException = prefs.getInt('missConditionException') ?? 0;
+    final int missOpenBraceException = prefs.getInt('missOpenBraceException') ?? 0;
+    final int invalidConditionException = prefs.getInt('invalidConditionException') ?? 0;
+    final int missConditionalBlockException = prefs.getInt('missConditionalBlockException') ?? 0;
+    final int unexpectedCloseBraceException = prefs.getInt('unexpectedCloseBraceException') ?? 0;
+    final int invalidInstructionException = prefs.getInt('invalidInstructionException') ?? 0;
+    final int otherException = prefs.getInt('otherException') ?? 0;
+
+    return [
+      Erro(title: "Parâmetros inválidos",many: invalidParamException, barColor: charts.ColorUtil.fromDartColor(Colors.white)),
+      Erro(title: "Ausências de parâmetro",many: missingParamException, barColor: charts.ColorUtil.fromDartColor(Colors.blue)),
+      Erro(title: "Ausências de )",many: missCloseParenthesesException, barColor: charts.ColorUtil.fromDartColor(Colors.green)),
+      Erro(title: "Ausências de ;",many: missSemicolonException, barColor: charts.ColorUtil.fromDartColor(Colors.grey)),
+      Erro(title: "Ausências de (",many: missOpenParenthesesException, barColor: charts.ColorUtil.fromDartColor(Colors.yellow)),
+      Erro(title: "Ausências de condição",many: missConditionException, barColor: charts.ColorUtil.fromDartColor(Colors.red)),
+      Erro(title: "Ausências de {",many: missOpenBraceException, barColor: charts.ColorUtil.fromDartColor(Colors.black)),
+      Erro(title: "Condições inválidas",many: invalidConditionException, barColor: charts.ColorUtil.fromDartColor(Colors.cyan)),
+      Erro(title: "Faltou um \"se\"",many: missConditionalBlockException, barColor: charts.ColorUtil.fromDartColor(Colors.brown)),
+      Erro(title: "Uso inesperado {",many: unexpectedCloseBraceException, barColor: charts.ColorUtil.fromDartColor(Colors.orange)),
+      Erro(title: "Instrução inválida",many: invalidInstructionException, barColor: charts.ColorUtil.fromDartColor(Colors.teal)),
+      Erro(title: "Outros erros",many: otherException, barColor: charts.ColorUtil.fromDartColor(Colors.purple)),
+    ];
   }
 }
