@@ -1,4 +1,5 @@
 import 'package:tod/utils/commands.dart';
+import 'package:tod/utils/exceptions/exceptions.dart';
 
 class Compiler{
 
@@ -14,13 +15,13 @@ class Compiler{
         if(code[i] == '('){
           int len = parameter(')', code, i+1);
           if(len == -1){
-            throw Exception("Parametro invalido");
+            throw InvalidParamException("Parametro inválido");
             //Parametro invalido
           }else if(len == 0){
-            throw Exception("Falta parametro");
+            throw MissingParamException("Falta parametro");
             //Falta parametro
           }else if(len == -2){
-            throw Exception("Falta fechar parenteses");
+            throw MissCloseParenthesesException("Faltou fechar parêntesis");
             //Faltou fechar parenteses
           }else{
             if(currentCode == 'andarFrente'){
@@ -33,14 +34,14 @@ class Compiler{
             currentCode = "";
             i = (i+1)+len;
             if(code[i+1] != ';'){
-              throw Exception("Falta ;");
+              throw MissSemicolonException("Faltou ponto-e-vírgula");
               //Faltou encerrar com ';'
             }else{
               i++;
             }
           }
         }else{
-          throw Exception("Falta (");
+          throw MissOpenParenthesesException("Faltou abrir parentesis");
           //Deveria ser um '('
         }
       }else if(currentCode == 'pegar' ||
@@ -58,7 +59,7 @@ class Compiler{
             currentCode = "";
             i = (i+1)+len;
             if(code[i+1] != ';'){
-              throw Exception("Falta ;");
+              throw MissSemicolonException("Faltou ponto-e-vírgula");
               //Faltou encerrar com ';'
             }else{
               i++;
@@ -66,23 +67,23 @@ class Compiler{
 
           }else if(len == -2) {
             //Faltou fechar parenteses
-            throw Exception("Falta fechar parenteses");
+            throw MissCloseParenthesesException("Faltou fechar parêntesis");
           }else{
             //Não deveria ter parametro
-            throw Exception("Parametro inválido");
+            throw InvalidParamException("Parâmetro inválido");
           }
         }else{
           //Deveria ser um '('
-          throw Exception("Falta (");
+          throw MissOpenParenthesesException("Faltou abrir parêntesis");
         }
       }else if(currentCode == 'se' && code[i] == '('){
         int length = parameter(')', code, i, isInt: false);
         if(length == 0){
           //Faltou parametro
-          throw Exception("Falta condicao");
+          throw MissConditionException("Faltou a condição");
         }else if(length == -2){
           //Não encontrou o ')'
-          throw Exception("Falta fechar parenteses");
+          throw MissCloseParenthesesException("Faltou fechar a condição");
         }else{
           String substring = code.substring(i+1,i+length);
           if(substring == 'vazioFrente'){
@@ -91,7 +92,7 @@ class Compiler{
             i = (i+1)+length;
             if(code[i] != '{'){
               //Faltou abrir '{'
-              throw Exception("Falta abrir {");
+              throw MissOpenBraceException("Faltou abrir chave");
             }else{
               generatedCommand += '{';
               onBloc ++;
@@ -102,7 +103,7 @@ class Compiler{
             i = (i+1)+length;
             if(code[i] != '{'){
               //Faltou abrir '{'
-              throw Exception("Falta abrir {");
+              throw MissOpenBraceException("Faltou abrir chave");
             }else{
               generatedCommand += '{';
               onBloc ++;
@@ -112,7 +113,7 @@ class Compiler{
             currentCode = "";
             i = (i+1)+length;
             if(code[i] != '{'){
-              throw Exception("Falta abrir {");
+              throw MissOpenBraceException("Faltou abrir chave");
             }else{
               generatedCommand += '{';
               onBloc ++;
@@ -122,14 +123,14 @@ class Compiler{
             currentCode = "";
             i = (i+1)+length;
             if(code[i] != '{'){
-              throw Exception("Falta abrir {");
+              throw MissOpenBraceException("Faltou abrir chave");
             }else{
               generatedCommand += '{';
               onBloc ++;
             }
           }else{
             //Condicao invalida
-            throw Exception("Condicao invalida");
+            throw InvalidConditionException("Condição inválida");
           }
         }
 
@@ -139,7 +140,7 @@ class Compiler{
           currentCode = "";
           onBloc ++;
         }else{
-          throw Exception("Deve vir após um \"se\" ou \"senao\"");
+          throw MissConditionalBlockException("Deveria vir após um \"se\" ou \"senao\"");
           //Tem que vir depois de um senao ou de um se
         }
 
@@ -149,10 +150,10 @@ class Compiler{
             //Ta ok
             int length = parameter(')', code, i, isInt: false);
             if (length == 0) {
-              throw Exception("Falta condicao");
+              throw MissConditionException("Faltou a condição");
               //Faltou parametro
             } else if (length == -2) {
-              throw Exception("Falta fechar parenteses");
+              throw MissCloseParenthesesException("Faltou fechar parêntesis");
               //Não encontrou o ')'
             } else {
               String substring = code.substring(i + 1, i + length);
@@ -162,7 +163,7 @@ class Compiler{
                 i = (i + 1) + length;
                 if (code[i] != '{') {
                   //Faltou abrir '{'
-                  throw Exception("Falta abrir {");
+                  throw MissOpenBraceException("Faltou abrir chave");
                 } else {
                   generatedCommand += '{';
                   onBloc ++;
@@ -173,7 +174,7 @@ class Compiler{
                 i = (i + 1) + length;
                 if (code[i] != '{') {
                   //Faltou abrir '{'
-                  throw Exception("Falta abrir {");
+                  throw MissOpenBraceException("Faltou abrir chave");
                 } else {
                   generatedCommand += '{';
                   onBloc ++;
@@ -184,7 +185,7 @@ class Compiler{
                 i = (i + 1) + length;
                 if (code[i] != '{') {
                   //Faltou abrir '{'
-                  throw Exception("Falta abrir {");
+                  throw MissOpenBraceException("Faltou abrir chave");
                 } else {
                   generatedCommand += '{';
                   onBloc ++;
@@ -195,34 +196,34 @@ class Compiler{
                 i = (i + 1) + length;
                 if (code[i] != '{') {
                   //Faltou abrir '{'
-                  throw Exception("Falta abrir {");
+                  throw MissOpenBraceException("Faltou abrir chave");
                 } else {
                   generatedCommand += '{';
                   onBloc ++;
                 }
               } else {
                 //Condicao invalida
-                throw Exception("Condicao invalida");
+                throw InvalidConditionException("Condição inválida");
               }
             }
           }else{
-            throw Exception("Deve vir após um \"se\" ou \"senao\"");
+            throw MissConditionalBlockException("Deve vir após um \"se\" ou \"senao\"");
             //tem que vir depois de um "se" ou "senao"
           }
         }else{
           //Deveria ser '(';
-          throw Exception("Falta (");
+          throw MissOpenParenthesesException("Faltou abrir parêntesis");
         }
       }else if(currentCode == 'enquanto'){
         if(code[i] == '('){
           //Ta ok
           int length = parameter(')', code, i, isInt: false);
           if(length == 0){
-            throw Exception("Falta condicao");
+            throw MissConditionException("Faltou uma condição");
             //Faltou parametro
           }else if(length == -2){
             //Não encontrou o ')'
-            throw Exception("Falta fechar parenteses");
+            throw MissCloseParenthesesException("Faltou fechar parentesis");
 
           }else {
             String substring = code.substring(i + 1, i + length);
@@ -232,7 +233,7 @@ class Compiler{
               i = (i + 1) + length;
               if (code[i] != '{') {
                 //Faltou abrir '{'
-                throw Exception("Falta abrir {");
+                throw MissOpenBraceException("Faltou abrir chave");
               } else {
                 generatedCommand += '{';
                 onBloc ++;
@@ -242,7 +243,7 @@ class Compiler{
               currentCode = "";
               i = (i + 1) + length;
               if (code[i] != '{') {
-                throw Exception("Falta abrir {");
+                throw MissOpenBraceException("Faltou abrir chave");
               } else {
                 generatedCommand += '{';
                 onBloc ++;
@@ -252,7 +253,7 @@ class Compiler{
               currentCode = "";
               i = (i + 1) + length;
               if (code[i] != '{') {
-                throw Exception("Falta abrir {");
+                throw MissOpenBraceException("Faltou abrir chave");
               } else {
                 generatedCommand += '{';
                 onBloc ++;
@@ -262,17 +263,17 @@ class Compiler{
               currentCode = "";
               i = (i + 1) + length;
               if (code[i] != '{') {
-                throw Exception("Falta abrir {");
+                throw MissOpenBraceException("Faltou abrir chave");
               } else {
                 generatedCommand += '{';
                 onBloc ++;
               }
             } else {
-              throw Exception("Condicao invalida");
+              throw InvalidConditionException("Condição inválida");
             }
           }
         }else{
-          throw Exception("Falta (");
+          throw MissOpenParenthesesException("Faltou abrir parêntesis");
         }
       }
 
@@ -283,7 +284,7 @@ class Compiler{
             generatedCommand += '}';
             currentCode = "";
           }else{
-            throw Exception("Fechou } sem ter aberto");
+            throw UnexpectedCloseBraceException("Fechamento de chave inesperado");
           }
         }
         else if(code[i] == '\n' || code[i] == ' ' || code[i] == '\t'){
@@ -293,12 +294,12 @@ class Compiler{
       }
     }
     if(onBloc > 0){
-      throw Exception("Faltou fechar parentesis");
+      throw MissCloseParenthesesException("Faltou fechar parêntesis");
     }
     if(currentCode.isEmpty){
       return generatedCommand;
     }else{
-      throw("Instrucao invalida");
+      throw InvalidInstructionException("Instrução inválida");
     }
 
   }

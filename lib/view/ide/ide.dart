@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:tod/ide/ide_controller.dart';
+import 'package:tod/view/ide/ide_controller.dart';
 class IDE extends StatefulWidget {
   const IDE({Key? key}) : super(key: key);
 
@@ -33,6 +33,8 @@ class _IDEState extends State<IDE> {
               title: Text('Open'.toUpperCase(),style: const TextStyle(color: Colors.white, fontSize: 17),),
               onTap: () {
                 // Implementar ação ao selecionar o item 1
+                controller.openFile();
+                _scaffoldKey.currentState!.closeDrawer();
               },
             ),
             ListTile(
@@ -40,6 +42,8 @@ class _IDEState extends State<IDE> {
               title: Text('New'.toUpperCase(),style: const TextStyle(color: Colors.white, fontSize: 17),),
               onTap: () {
                 // Implementar ação ao selecionar o item 2
+                controller.newCode();
+                _scaffoldKey.currentState!.closeDrawer();
               },
             ),
             ListTile(
@@ -47,6 +51,8 @@ class _IDEState extends State<IDE> {
               title: Text('Save'.toUpperCase(),style: const TextStyle(color: Colors.white, fontSize: 17),),
               onTap: () {
                 // Implementar ação ao selecionar o item 1
+                controller.saveFile();
+                _scaffoldKey.currentState!.closeDrawer();
               },
             ),
             ListTile(
@@ -82,19 +88,24 @@ class _IDEState extends State<IDE> {
             ],
           ),
           Positioned(bottom: 50,
-            left: 15,child: Container(
-              decoration: const BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Color(0xFF292525)
+            left: 15,child: InkWell(
+              child: Container(
+                decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Color(0xFF292525)
+                ),
+                padding: const EdgeInsets.all(9),
+                child: const Icon(
+                  Icons.save,
+                  color: Color(0xFFD9D9D9),
+                  size: 50,
+                ),
               ),
-              padding: const EdgeInsets.all(9),
-              child: const Icon(
-                Icons.save,
-                color: Color(0xFFD9D9D9),
-                size: 50,
-              ),
+              onTap: (){
+                controller.saveFile();
+              },
             ),),
-          Positioned(bottom: 50, left: 0, right: 0,child: InkWell(
+          Positioned(bottom: 50, left: 100, right: 100,child: InkWell(
             child: Container(
               decoration: const BoxDecoration(
                   shape: BoxShape.circle,
@@ -126,9 +137,40 @@ class _IDEState extends State<IDE> {
               ),
             ),
             onTap: (){
-              controller.sendString();
+              controller.compile();
             },
-          ))
+          )),
+          Visibility(child: Positioned(
+            bottom: 0,
+            top: 0,
+            left: 0,
+            right: 0,
+            child: InkWell(
+              child: Container(
+                  decoration: const BoxDecoration(
+                    color: Color(0xD9000000),
+                  ),
+                  child: Container(
+                    margin: EdgeInsets.symmetric(vertical: 350,horizontal: 50),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      color: Colors.grey,
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Icon(Icons.warning,size: 40,),
+                        Text('${controller.msgErrorDialog}')
+                      ],
+                    ),
+                  )
+              ),
+              onTap: (){
+                controller.disableDialog();
+              },
+            ),
+          ),visible: controller.visibleErrorDialog,)
         ],
       );
     });

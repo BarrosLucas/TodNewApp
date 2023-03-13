@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:tod/splash/splash.dart';
+import 'package:tod/view/splash/splash.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();

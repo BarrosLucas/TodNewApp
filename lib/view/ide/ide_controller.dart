@@ -1,16 +1,33 @@
 import 'dart:convert';
+import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 
 import 'package:mobx/mobx.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:tod/utils/compiler.dart';
+import 'package:tod/utils/exceptions/exceptions.dart';
 
 part 'ide_controller.g.dart';
 class IDEController = ControllerBase with _$IDEController;
 
 abstract class ControllerBase with Store{
+  @observable
+  bool visibleErrorDialog = false;
+
+  @observable
+  String msgErrorDialog = "";
+
+  @observable
+  String generatedCod = "";
+
+  @observable
+  String nameFile = "";
+
 
   @observable
   FlutterBluetoothSerial flutterBlue = FlutterBluetoothSerial.instance;
@@ -95,15 +112,20 @@ abstract class ControllerBase with Store{
   }
 
   @action
-  Future<void> sendString() async {
+  Future<void> sendString(String code) async {
     if (!isConnected || connectedDevice == null || connection == null) {
       throw Exception("Não há dispositivo conectado");
     }
 
     // Envia uma string para o dispositivo
-    connection!.output.add(Uint8List.fromList(code.text.codeUnits));
+    connection!.output.add(Uint8List.fromList(code.codeUnits));
     await connection!.output.allSent;
 
+  }
+
+  @action
+  newCode(){
+    code.text = "";
   }
 
   // Verifica se a permissão de Bluetooth foi concedida
@@ -117,5 +139,89 @@ abstract class ControllerBase with Store{
 
     //Return your boolean here
     return permOne && permTwo && permThree? true : false;
+  }
+
+  @action
+  compile(){
+    String c = checkCode();
+    print(c);
+    if(c.isNotEmpty){
+      sendString(c);
+    }
+  }
+
+  @action
+  String checkCode(){
+    try{
+      return Compiler().getCommands(code.text);
+    }catch(e){
+      visibleErrorDialog  = true;
+      if(e is InvalidParamException){
+        msgErrorDialog = e.message;
+      }else if(e is MissingParamException){
+        msgErrorDialog = e.message;
+      }else if(e is MissCloseParenthesesException){
+        msgErrorDialog = e.message;
+      }else if(e is MissSemicolonException){
+        msgErrorDialog = e.message;
+      }else if(e is MissOpenParenthesesException){
+        msgErrorDialog = e.message;
+      }else if(e is MissConditionException){
+        msgErrorDialog = e.message;
+      }else if(e is MissOpenBraceException){
+        msgErrorDialog = e.message;
+      }else if(e is InvalidConditionException){
+        msgErrorDialog = e.message;
+      }else if(e is MissConditionalBlockException){
+        msgErrorDialog = e.message;
+      }else if(e is UnexpectedCloseBraceException){
+        msgErrorDialog = e.message;
+      }else if(e is InvalidInstructionException){
+        msgErrorDialog = e.message;
+      }else{
+        msgErrorDialog = "Verifique seu código e tente novamente";
+        print(e);
+      }
+      print(msgErrorDialog);
+      return "";
+    }
+  }
+
+  @action
+  disableDialog(){
+    visibleErrorDialog = false;
+  }
+
+  Future<File?> pickFile() async {
+    final result = await FilePicker.platform.pickFiles();
+    if (result == null) {
+      return null;
+    }
+    final path = result.files.single.path!;
+    return File(path);
+  }
+
+  @action
+  saveFile() async{
+    // Abre a tela de seleção de arquivo ou pasta
+    String? selectedDirectory = await FilePicker.platform.getDirectoryPath();
+
+    if (selectedDirectory == null) {
+      return;
+    }
+
+    DateTime now = DateTime.now();
+    int timestamp = now.millisecondsSinceEpoch ~/ 1000;
+    File newFile = File('${selectedDirectory}/TOD-$timestamp}');
+    newFile.writeAsString(code.text);
+  }
+
+  @action
+  openFile() async{
+    File? file = await pickFile();
+    if(file == null){
+      return;
+    }
+    code.text = await file.readAsString();
   }
 }
