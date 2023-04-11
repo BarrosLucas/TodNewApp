@@ -272,14 +272,14 @@ abstract class ControllerBase with Store{
     final int otherException = prefs.getInt('otherException') ?? 0;
 
     return [
-      Erro(title: "Parâmetros inválidos",many: invalidParamException, barColor: charts.ColorUtil.fromDartColor(Colors.white)),
-      Erro(title: "Ausências de parâmetro",many: missingParamException, barColor: charts.ColorUtil.fromDartColor(Colors.blue)),
+      Erro(title: "Parâmetro errado",many: invalidParamException, barColor: charts.ColorUtil.fromDartColor(Colors.pink)),
+      Erro(title: "Sem parâmetro",many: missingParamException, barColor: charts.ColorUtil.fromDartColor(Colors.blue)),
       Erro(title: "Ausências de )",many: missCloseParenthesesException, barColor: charts.ColorUtil.fromDartColor(Colors.green)),
       Erro(title: "Ausências de ;",many: missSemicolonException, barColor: charts.ColorUtil.fromDartColor(Colors.grey)),
       Erro(title: "Ausências de (",many: missOpenParenthesesException, barColor: charts.ColorUtil.fromDartColor(Colors.yellow)),
-      Erro(title: "Ausências de condição",many: missConditionException, barColor: charts.ColorUtil.fromDartColor(Colors.red)),
+      Erro(title: "Sem condição",many: missConditionException, barColor: charts.ColorUtil.fromDartColor(Colors.red)),
       Erro(title: "Ausências de {",many: missOpenBraceException, barColor: charts.ColorUtil.fromDartColor(Colors.black)),
-      Erro(title: "Condições inválidas",many: invalidConditionException, barColor: charts.ColorUtil.fromDartColor(Colors.cyan)),
+      Erro(title: "Condição errada",many: invalidConditionException, barColor: charts.ColorUtil.fromDartColor(Colors.cyan)),
       Erro(title: "Faltou um \"se\"",many: missConditionalBlockException, barColor: charts.ColorUtil.fromDartColor(Colors.brown)),
       Erro(title: "Uso inesperado {",many: unexpectedCloseBraceException, barColor: charts.ColorUtil.fromDartColor(Colors.orange)),
       Erro(title: "Instrução inválida",many: invalidInstructionException, barColor: charts.ColorUtil.fromDartColor(Colors.teal)),

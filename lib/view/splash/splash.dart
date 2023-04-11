@@ -13,14 +13,14 @@ class _SplashState extends State<Splash> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF0B0B0D),
+      backgroundColor: const Color(0xffd9d9d9),
       body: Stack(
         children: [
           SplashScreen(
             seconds: 7,
             navigateAfterSeconds:IDE(),
             useLoader: false,
-            backgroundColor: const Color(0xFF0B0B0D),
+            backgroundColor: const Color(0xffd9d9d9),
           ),
           Positioned(child: Center(
             child: Image.asset('assets/images/logo.png',scale: 1.6),

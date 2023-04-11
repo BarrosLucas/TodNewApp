@@ -20,19 +20,19 @@ class _IDEState extends State<IDE> {
       body: bodyScreen(),
       key: _scaffoldKey,
       drawer: Drawer(
-        backgroundColor: Color(0xFF0B0B0D),
+        backgroundColor: Color(0xffd9d9d9),
         child: ListView(
           padding: EdgeInsets.zero,
           children: <Widget>[
             DrawerHeader(
               decoration: const BoxDecoration(
-                color: Color(0xFF0B0B0D),
+                color: Color(0xffd9d9d9),
               ),
               child: Container(child: Image.asset("assets/images/logo.png",scale: 1.7,),),
             ),
             ListTile(
-              leading: const Icon(Icons.file_open, color: Colors.white,),
-              title: Text('Open'.toUpperCase(),style: const TextStyle(color: Colors.white, fontSize: 17),),
+              leading: const Icon(Icons.file_open, color: Colors.blueGrey,),
+              title: Text('Open'.toUpperCase(),style: const TextStyle(color: Colors.blueGrey, fontSize: 17),),
               onTap: () {
                 // Implementar ação ao selecionar o item 1
                 controller.openFile();
@@ -40,8 +40,8 @@ class _IDEState extends State<IDE> {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.create_new_folder_sharp,color: Colors.white,),
-              title: Text('New'.toUpperCase(),style: const TextStyle(color: Colors.white, fontSize: 17),),
+              leading: const Icon(Icons.create_new_folder_sharp,color: Colors.blueGrey,),
+              title: Text('New'.toUpperCase(),style: const TextStyle(color: Colors.blueGrey, fontSize: 17),),
               onTap: () {
                 // Implementar ação ao selecionar o item 2
                 controller.newCode();
@@ -49,8 +49,8 @@ class _IDEState extends State<IDE> {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.save, color: Colors.white,),
-              title: Text('Save'.toUpperCase(),style: const TextStyle(color: Colors.white, fontSize: 17),),
+              leading: const Icon(Icons.save, color: Colors.blueGrey,),
+              title: Text('Save'.toUpperCase(),style: const TextStyle(color: Colors.blueGrey, fontSize: 17),),
               onTap: () {
                 // Implementar ação ao selecionar o item 1
                 controller.saveFile();
@@ -58,8 +58,8 @@ class _IDEState extends State<IDE> {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.area_chart,color: Colors.white,),
-              title: Text('Statistics'.toUpperCase(),style: const TextStyle(color: Colors.white, fontSize: 17),),
+              leading: const Icon(Icons.area_chart,color: Colors.blueGrey,),
+              title: Text('Statistics'.toUpperCase(),style: const TextStyle(color: Colors.blueGrey, fontSize: 17),),
               onTap: () async{
                 controller.getListToStatistics().then((value){
                   Navigator.push(context,MaterialPageRoute(builder: (context) => PieChart(value)));
@@ -67,13 +67,13 @@ class _IDEState extends State<IDE> {
                 // Implementar ação ao selecionar o item 2
               },
             ),
-            ListTile(
+            /*ListTile(
               leading: const Icon(Icons.keyboard_command_key,color: Colors.white,),
               title: Text('Commands'.toUpperCase(),style: const TextStyle(color: Colors.white, fontSize: 17),),
               onTap: () {
                 // Implementar ação ao selecionar o item 2
               },
-            ),
+            ),*/
           ],
         ),
       ),
